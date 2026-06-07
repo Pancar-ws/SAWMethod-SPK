@@ -61,19 +61,19 @@ const DEFAULT_DATA = {
   ],
 
   alternatives: [
-    { id: 'A1', name: 'Yunan',    kegiatan: 'Pengabdian Masyarakat ke Desa',             values: [3, 4, 3, 5, 1, 2] },
-    { id: 'A2', name: 'Fahmi',    kegiatan: 'Lomba MTQMN Tingkat Nasional',              values: [5, 4, 4, 5, 3, 4] },
-    { id: 'A3', name: 'Satria',   kegiatan: 'Kontes Robot Terbang Indonesia',            values: [5, 5, 5, 4, 2, 3] },
-    { id: 'A4', name: 'Renggo',   kegiatan: 'P2MW (Program Kemendikbud)',                values: [5, 3, 5, 4, 2, 2] },
-    { id: 'A5', name: 'Athalah',  kegiatan: 'Lomba Robot Nasional & Beasiswa',           values: [5, 5, 5, 5, 1, 1] }
+    { id: 'A1', name: 'Mahasiswa 1',    kegiatan: 'Pengabdian Masyarakat ke Desa',             values: [3, 4, 3, 5, 1, 2] },
+    { id: 'A2', name: 'Mahasiswa 2',    kegiatan: 'Lomba MTQMN Tingkat Nasional',              values: [5, 4, 4, 5, 3, 4] },
+    { id: 'A3', name: 'Mahasiswa 3',   kegiatan: 'Kontes Robot Terbang Indonesia',            values: [5, 5, 5, 4, 2, 3] },
+    { id: 'A4', name: 'Mahasiswa 4',   kegiatan: 'P2MW (Program Kemendikbud)',                values: [5, 3, 5, 4, 2, 2] },
+    { id: 'A5', name: 'Mahasiswa 5',  kegiatan: 'Lomba Robot Nasional & Beasiswa',           values: [5, 5, 5, 5, 1, 1] }
   ],
 
   // Referensi hasil akhir yang benar berdasarkan bobot C5 (10%) dan C6 (15%)
   expectedResults: [
-    { name: 'Athalah', preference: 1.0000, rank: 1 },
-    { name: 'Satria',  preference: 0.8200, rank: 2 },
-    { name: 'Yunan',   preference: 0.7700, rank: 3 },
-    { name: 'Renggo',  preference: 0.7550, rank: 4 },
-    { name: 'Fahmi',   preference: 0.7516, rank: 5 }
+    { name: 'Mahasiswa 5', preference: 1.0000, rank: 1 },
+    { name: 'Mahasiswa 2',  preference: 0.8200, rank: 2 },
+    { name: 'Mahasiswa 3',   preference: 0.7700, rank: 3 },
+    { name: 'Mahasiswa 4',  preference: 0.7550, rank: 4 },
+    { name: 'Mahasiswa 1',   preference: 0.7516, rank: 5 }
   ]
 };
