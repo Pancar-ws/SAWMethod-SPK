@@ -1,74 +1,61 @@
 /**
- * Implementasi Metode SAW
- * Simple Additive Weighting
+ * Engine Algoritma Simple Additive Weighting (SAW)
  */
 
-function normalizeWeights(weights) {
-  const sum = weights.reduce((a, b) => a + b, 0);
-  if (sum === 0) return weights.map(() => 1 / weights.length);
-  return weights.map((w) => w / sum);
-}
-
-function saw(decisionMatrix, weights, criteriaTypes) {
+function calculateNormalization(decisionMatrix, criteriaTypes) {
   const m = decisionMatrix.length;
-  const n = weights.length;
-
-  if (m === 0 || n === 0) {
-    throw new Error('Matriks keputusan tidak boleh kosong.');
-  }
-
-  const normalizedWeights = normalizeWeights(weights);
+  const n = criteriaTypes.length;
   const normalized = Array.from({ length: m }, () => Array(n).fill(0));
 
-  // 1. Cari nilai Max dan Min untuk setiap kriteria
-  const maxVals = [];
-  const minVals = [];
   for (let j = 0; j < n; j++) {
-    const col = decisionMatrix.map(row => row[j]);
-    maxVals[j] = Math.max(...col);
-    minVals[j] = Math.min(...col);
-  }
+    const columnValues = decisionMatrix.map(row => row[j]);
+    const maxVal = Math.max(...columnValues);
+    const minVal = Math.min(...columnValues);
 
-  // 2. Normalisasi Matriks berdasarkan Cost/Benefit
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < n; j++) {
+    for (let i = 0; i < m; i++) {
       const val = decisionMatrix[i][j];
       if (criteriaTypes[j] === 'benefit') {
-        normalized[i][j] = maxVals[j] === 0 ? 0 : val / maxVals[j];
-      } else { 
-        // tipe cost
-        normalized[i][j] = val === 0 ? 0 : minVals[j] / val;
+        normalized[i][j] = maxVal === 0 ? 0 : val / maxVal;
+      } else {
+        // Atribut Cost -> min / x
+        normalized[i][j] = val === 0 ? 0 : minVal / val;
       }
     }
   }
+  return normalized;
+}
 
-  // 3. Hitung Nilai Preferensi (V)
-  const preference = [];
-  for (let i = 0; i < m; i++) {
-    let sum = 0;
-    for (let j = 0; j < n; j++) {
-      sum += normalized[i][j] * normalizedWeights[j];
-    }
-    preference[i] = sum;
+function processSAW(decisionMatrix, weights, criteriaTypes) {
+  if (decisionMatrix.length === 0 || weights.length === 0) {
+    throw new Error('Dataset matriks tidak valid / kosong.');
   }
 
-  // 4. Perangkingan
-  const ranking = preference
-    .map((pref, i) => ({ index: i, preference: pref }))
-    .sort((a, b) => b.preference - a.preference)
+  // Standarisasi Bobot jika total bukan 1
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  const w = totalWeight === 0 ? weights.map(() => 1 / weights.length) : weights.map(val => val / totalWeight);
+
+  // 1. Normalisasi (R)
+  const normalizedMatrix = calculateNormalization(decisionMatrix, criteriaTypes);
+
+  // 2. Nilai Preferensi Akhir (V)
+  const preferenceScores = normalizedMatrix.map(row => {
+    return row.reduce((sum, val, j) => sum + (val * w[j]), 0);
+  });
+
+  // 3. Klasifikasi Peringkat
+  const ranking = preferenceScores
+    .map((score, index) => ({ index, score }))
+    .sort((a, b) => b.score - a.score)
     .map((item, rank) => ({ ...item, rank: rank + 1 }));
 
   return {
-    normalizedWeights,
-    maxVals,
-    minVals,
-    normalized,
-    preference,
+    normalizedWeights: w,
+    normalizedMatrix,
+    preferenceScores,
     ranking
   };
 }
 
-function formatNumber(num, decimals = 4) {
-  if (num === null || num === undefined || Number.isNaN(num)) return '-';
-  return Number(num).toFixed(decimals);
+function formatVal(num, decimals = 4) {
+  return (num === null || isNaN(num)) ? '-' : Number(num).toFixed(decimals);
 }

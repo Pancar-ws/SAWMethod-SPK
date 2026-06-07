@@ -1,294 +1,222 @@
 /**
- * SPK Dispensasi Mahasiswa — Aplikasi Utama
+ * Pengendali UI Dashboard SPK Dispensasi
  */
 
-let appState = {
+let state = {
   criteria: structuredClone(DEFAULT_DATA.criteria),
   alternatives: structuredClone(DEFAULT_DATA.alternatives),
   result: null
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  initNavigation();
-  initBeranda();
-  initTentang();
-  renderInputTables();
-  bindEvents();
+  setupRouting();
+  renderDashboardData();
+  renderManageData();
+  attachEventListeners();
 });
 
-function initNavigation() {
-  const navBtns = document.querySelectorAll('.nav-btn');
-  const navToggle = document.getElementById('navToggle');
-  const nav = document.getElementById('mainNav');
+function setupRouting() {
+  const tabs = document.querySelectorAll('.nav-item');
+  const toggle = document.getElementById('navToggle');
+  const navBox = document.getElementById('mainNav');
 
-  navBtns.forEach((btn) => {
-    btn.addEventListener('click', () => navigateTo(btn.dataset.page));
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => switchPage(btn.dataset.page));
   });
-
-  document.querySelectorAll('[data-goto]').forEach((el) => {
-    el.addEventListener('click', () => navigateTo(el.dataset.goto));
+  document.querySelectorAll('[data-goto]').forEach(btn => {
+    btn.addEventListener('click', () => switchPage(btn.dataset.goto));
   });
-
-  navToggle.addEventListener('click', () => nav.classList.toggle('open'));
+  toggle.addEventListener('click', () => navBox.classList.toggle('open'));
 }
 
-function navigateTo(pageId) {
-  document.querySelectorAll('.page').forEach((p) => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
-
+function switchPage(pageId) {
+  document.querySelectorAll('.view-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById(`page-${pageId}`).classList.add('active');
   document.querySelector(`[data-page="${pageId}"]`)?.classList.add('active');
   document.getElementById('mainNav').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function initBeranda() {
-  const container = document.getElementById('criteriaOverview');
-  container.innerHTML = appState.criteria
-    .map(
-      (c) => `
-      <div class="criteria-item">
-        <div class="code">${c.id}</div>
-        <div class="name">${c.name}</div>
-        <div class="weight">${(c.weight * 100).toFixed(0)}%</div>
-        <div class="type">${c.type === 'benefit' ? 'Benefit' : 'Cost'}</div>
-      </div>`
-    )
-    .join('');
+function renderDashboardData() {
+  document.getElementById('statCriteria').textContent = state.criteria.length;
+  document.getElementById('statAlt').textContent = state.alternatives.length;
+
+  document.getElementById('criteriaOverview').innerHTML = state.criteria.map(c => `
+    <div class="param-card type-${c.type}">
+      <span class="param-badge">${c.type.toUpperCase()}</span>
+      <div class="param-id">${c.id}</div>
+      <div class="param-name">${c.name}</div>
+      <div class="param-weight">Bobot: ${(c.weight * 100).toFixed(0)}%</div>
+    </div>
+  `).join('');
 }
 
-function initTentang() {
-  document.getElementById('authorsList').innerHTML = DEFAULT_DATA.authors
-    .map((a) => `<li>${a}</li>`)
-    .join('');
+function renderManageData() {
+  // Render Tabel Bobot
+  document.querySelector('#weightTable tbody').innerHTML = state.criteria.map((c, i) => `
+    <tr>
+      <td><strong>${c.id}</strong></td>
+      <td>${c.name}</td>
+      <td><span class="param-badge" style="position:static">${c.type.toUpperCase()}</span></td>
+      <td><input type="number" step="0.01" value="${c.weight}" data-index="${i}" class="input-weight"></td>
+      <td style="color:var(--text-muted); font-size:0.8rem;">${c.description}</td>
+    </tr>
+  `).join('');
+
+  // Render Tabel Matriks
+  const headCells = state.criteria.map(c => `<th>${c.id}<br><small style="font-weight:400">${c.name}</small></th>`).join('');
+  document.querySelector('#matrixTable thead').innerHTML = `<tr><th>No</th><th>Identitas Mahasiswa</th>${headCells}</tr>`;
+
+  document.querySelector('#matrixTable tbody').innerHTML = state.alternatives.map((alt, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><strong>${alt.name}</strong></td>
+      ${alt.values.map((v, j) => `<td><input type="number" step="any" value="${v}" data-row="${i}" data-col="${j}" class="input-matrix"></td>`).join('')}
+    </tr>
+  `).join('');
+
+  checkWeightSum();
 }
 
-function renderInputTables() {
-  renderWeightTable();
-  renderMatrixTable();
-  updateWeightTotal();
+function checkWeightSum() {
+  const sum = state.criteria.reduce((acc, c) => acc + c.weight, 0);
+  const badge = document.getElementById('weightTotal');
+  badge.textContent = `Akumulasi: ${formatVal(sum, 2)}`;
+  badge.style.color = Math.abs(sum - 1) > 0.01 ? 'var(--danger)' : 'var(--indigo-600)';
+  badge.style.background = Math.abs(sum - 1) > 0.01 ? '#fee2e2' : 'var(--indigo-50)';
 }
 
-function renderWeightTable() {
-  const tbody = document.querySelector('#weightTable tbody');
-  tbody.innerHTML = appState.criteria
-    .map(
-      (c, i) => `
-      <tr>
-        <td><strong>${c.id}</strong></td>
-        <td>${c.name}</td>
-        <td><span class="type-badge ${c.type}">${c.type}</span></td>
-        <td>
-          <input type="number" min="0" max="1" step="0.01"
-            value="${c.weight}" data-weight-index="${i}" class="weight-input">
-        </td>
-        <td style="color:var(--text-muted);font-size:0.8rem">${c.description}</td>
-      </tr>`
-    )
-    .join('');
-}
-
-function renderMatrixTable() {
-  const thead = document.querySelector('#matrixTable thead');
-  const tbody = document.querySelector('#matrixTable tbody');
-
-  const headerCells = appState.criteria.map((c) => `<th>${c.id}<br><small>${c.name}</small></th>`).join('');
-  thead.innerHTML = `<tr><th>No</th><th>Nama Mahasiswa</th>${headerCells}</tr>`;
-
-  tbody.innerHTML = appState.alternatives
-    .map(
-      (alt, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td><strong>${alt.name}</strong></td>
-        ${alt.values
-          .map(
-            (val, j) => `
-          <td>
-            <input type="number" min="0" step="any"
-              value="${val}" data-alt-index="${i}" data-crit-index="${j}" class="matrix-input">
-          </td>`
-          )
-          .join('')}
-      </tr>`
-    )
-    .join('');
-}
-
-function updateWeightTotal() {
-  const total = appState.criteria.reduce((sum, c) => sum + c.weight, 0);
-  const el = document.getElementById('weightTotal');
-  el.textContent = `Total: ${formatNumber(total, 4)}`;
-  el.classList.toggle('invalid', Math.abs(total - 1) > 0.01);
-}
-
-function bindEvents() {
-  document.getElementById('weightTable').addEventListener('input', (e) => {
-    if (!e.target.classList.contains('weight-input')) return;
-    const idx = parseInt(e.target.dataset.weightIndex, 10);
-    appState.criteria[idx].weight = parseFloat(e.target.value) || 0;
-    updateWeightTotal();
+function attachEventListeners() {
+  document.getElementById('weightTable').addEventListener('input', e => {
+    if (e.target.classList.contains('input-weight')) {
+      state.criteria[e.target.dataset.index].weight = parseFloat(e.target.value) || 0;
+      checkWeightSum();
+    }
   });
 
-  document.getElementById('matrixTable').addEventListener('input', (e) => {
-    if (!e.target.classList.contains('matrix-input')) return;
-    const altIdx = parseInt(e.target.dataset.altIndex, 10);
-    const critIdx = parseInt(e.target.dataset.critIndex, 10);
-    appState.alternatives[altIdx].values[critIdx] = parseFloat(e.target.value) || 0;
+  document.getElementById('matrixTable').addEventListener('input', e => {
+    if (e.target.classList.contains('input-matrix')) {
+      state.alternatives[e.target.dataset.row].values[e.target.dataset.col] = parseFloat(e.target.value) || 0;
+    }
   });
 
   document.getElementById('btnReset').addEventListener('click', () => {
-    appState.criteria = structuredClone(DEFAULT_DATA.criteria);
-    appState.alternatives = structuredClone(DEFAULT_DATA.alternatives);
-    appState.result = null;
-    renderInputTables();
-    hideResults();
+    if(confirm('Reset semua nilai matriks ke default awal?')){
+      state = {
+        criteria: structuredClone(DEFAULT_DATA.criteria),
+        alternatives: structuredClone(DEFAULT_DATA.alternatives),
+        result: null
+      };
+      renderManageData();
+      hideOutput();
+    }
   });
 
-  document.getElementById('btnCalculate').addEventListener('click', calculate);
+  document.getElementById('btnCalculate').addEventListener('click', executeSAW);
   document.getElementById('btnPrint').addEventListener('click', () => window.print());
 }
 
-function calculate() {
-  const weights = appState.criteria.map((c) => c.weight);
-  const types = appState.criteria.map((c) => c.type);
-  const matrix = appState.alternatives.map((a) => [...a.values]);
-  const names = appState.alternatives.map((a) => a.name);
-  const critLabels = appState.criteria.map((c) => c.id);
-
-  try {
-    const result = saw(matrix, weights, types);
-    appState.result = { ...result, names, critLabels };
-    renderCalculation();
-    renderResults();
-    navigateTo('hasil');
-  } catch (err) {
-    alert('Terjadi kesalahan: ' + err.message);
-  }
-}
-
-function hideResults() {
+function hideOutput() {
   document.getElementById('calcEmpty').classList.remove('hidden');
   document.getElementById('calcContent').classList.add('hidden');
   document.getElementById('resultEmpty').classList.remove('hidden');
   document.getElementById('resultContent').classList.add('hidden');
 }
 
-function buildMatrixTable(matrix, names, critLabels) {
-  const header = critLabels.map((c) => `<th>${c}</th>`).join('');
-  const rows = matrix
-    .map(
-      (row, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td><strong>${names[i]}</strong></td>
-        ${row.map((v) => `<td>${formatNumber(v)}</td>`).join('')}
-      </tr>`
-    )
-    .join('');
-
-  return `
-    <table class="data-table">
-      <thead>
-        <tr><th>No</th><th>Mahasiswa</th>${header}</tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+function buildGrid(matrix) {
+  const headers = state.criteria.map(c => `<th>${c.id}</th>`).join('');
+  const rows = matrix.map((row, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><strong>${state.alternatives[i].name}</strong></td>
+      ${row.map(v => `<td>${formatVal(v)}</td>`).join('')}
+    </tr>
+  `).join('');
+  return `<table class="styled-table"><thead><tr><th>No</th><th>Mahasiswa</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function renderCalculation() {
-  const r = appState.result;
-  if (!r) return;
+function executeSAW() {
+  const weights = state.criteria.map(c => c.weight);
+  const types = state.criteria.map(c => c.type);
+  const matrix = state.alternatives.map(a => [...a.values]);
 
-  document.getElementById('calcEmpty').classList.add('hidden');
-  document.getElementById('calcContent').classList.remove('hidden');
+  try {
+    const res = processSAW(matrix, weights, types);
+    state.result = res;
+    
+    // Render Perhitungan
+    document.getElementById('calcEmpty').classList.add('hidden');
+    document.getElementById('calcContent').classList.remove('hidden');
+    document.getElementById('stepNormalized').innerHTML = buildGrid(res.normalizedMatrix);
+    
+    document.getElementById('stepPreference').innerHTML = `
+      <table class="styled-table">
+        <thead><tr><th>Rank</th><th>Mahasiswa</th><th>Skor Preferensi (V)</th></tr></thead>
+        <tbody>
+          ${res.ranking.map(item => `
+            <tr>
+              <td><span class="badge-rank">${item.rank}</span></td>
+              <td><strong>${state.alternatives[item.index].name}</strong></td>
+              <td>${formatVal(item.score)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
 
-  const matrix = appState.alternatives.map((a) => [...a.values]);
-
-  document.getElementById('stepMatrix').innerHTML = buildMatrixTable(
-    matrix, r.names, r.critLabels
-  );
-
-  document.getElementById('stepNormalized').innerHTML = buildMatrixTable(
-    r.normalized, r.names, r.critLabels
-  );
-
-  const prefRows = r.ranking
-    .map((item) => {
-      const name = r.names[item.index];
-      return `
-        <tr>
-          <td>${item.rank}</td>
-          <td><strong>${name}</strong></td>
-          <td>${formatNumber(item.preference)}</td>
-        </tr>`;
-    })
-    .join('');
-
-  document.getElementById('stepPreference').innerHTML = `
-    <table class="data-table">
-      <thead>
-        <tr><th>Ranking</th><th>Mahasiswa</th><th>Nilai Preferensi (V<sub>i</sub>)</th></tr>
-      </thead>
-      <tbody>${prefRows}</tbody>
-    </table>`;
+    renderPodiumAndTable();
+    switchPage('hasil');
+  } catch(e) {
+    alert('Gagal Komputasi: ' + e.message);
+  }
 }
 
-function renderResults() {
-  const r = appState.result;
-  if (!r) return;
-
+function renderPodiumAndTable() {
   document.getElementById('resultEmpty').classList.add('hidden');
   document.getElementById('resultContent').classList.remove('hidden');
 
-  const winner = r.ranking[0];
-  const winnerName = r.names[winner.index];
+  const r = state.result.ranking;
+  
+  // Karena saat ini hanya ada 5 data, top 3 sangat relevan.
+  // Jika kurang dari 3, kita handle agar tidak error.
+  const top3 = [];
+  if (r[1]) top3.push(r[1]); // Juara 2
+  if (r[0]) top3.push(r[0]); // Juara 1
+  if (r[2]) top3.push(r[2]); // Juara 3
 
-  document.getElementById('resultHero').innerHTML = `
-    <div class="trophy">🎓</div>
-    <h3>Prioritas Penerima Dispensasi</h3>
-    <div class="winner">${winnerName}</div>
-    <div class="score">Nilai Preferensi: ${formatNumber(winner.preference)}</div>`;
+  // Render Podium Visual
+  document.getElementById('podiumArea').innerHTML = top3.map(item => {
+    if (!item) return ''; 
+    const realRank = item.rank;
+    const name = state.alternatives[item.index].name;
+    const initial = name.split(' ')[0]; // Ambil nama depan
+    return `
+      <div class="podium-box">
+        <div class="podium-name">${initial}</div>
+        <div class="podium-rank rank-${realRank}">
+          <span style="font-size:1.5rem">#${realRank}</span>
+          <div class="podium-score">${formatVal(item.score, 4)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
-  const tbody = document.querySelector('#resultTable tbody');
-  tbody.innerHTML = r.ranking
-    .map((item) => {
-      const name = r.names[item.index];
-      const rankClass = item.rank <= 3 ? `rank-${item.rank}` : 'rank-other';
-      const status =
-        item.rank <= 3
-          ? '<span class="status-recommended">★ Layak Menerima</span>'
-          : '<span class="status-normal">Dipertimbangkan</span>';
+  // Render Main Ranking Table (Kuota 2 teratas disetujui, sisanya dipertimbangkan)
+  const quota = 2;
 
-      return `
-        <tr>
-          <td><span class="rank-badge ${rankClass}">${item.rank}</span></td>
-          <td><strong>${name}</strong></td>
-          <td><strong>${formatNumber(item.preference)}</strong></td>
-          <td>${status}</td>
-        </tr>`;
-    })
-    .join('');
+  document.querySelector('#resultTable tbody').innerHTML = r.map(item => {
+    const name = state.alternatives[item.index].name;
+    const isPass = item.rank <= quota;
+    const status = isPass ? '<span class="status-yes">Prioritas Utama</span>' : '<span class="status-no">Reguler / Dipertimbangkan</span>';
 
-  const rankingText = r.ranking
-    .map((item, idx) => `${idx + 1}. ${r.names[item.index]} (${formatNumber(item.preference)})`)
-    .join(', ');
-
-  document.getElementById('reportText').innerHTML = `
-    <p>
-      <strong>Laporan Keputusan — Penentuan Dispensasi Mahasiswa</strong>
-    </p>
-    <p>
-      Berdasarkan perhitungan metode SAW dengan ${appState.criteria.length} kriteria
-      (${appState.criteria.map((c) => c.name).join(', ')}) dan ${appState.alternatives.length} alternatif mahasiswa,
-      sistem menghasilkan peringkat prioritas penerima dispensasi sebagai berikut:
-    </p>
-    <p><strong>${rankingText}</strong></p>
-    <p>
-      <strong>${winnerName}</strong> direkomendasikan sebagai prioritas utama dengan nilai preferensi tertinggi sebesar
-      <strong>${formatNumber(winner.preference)}</strong>. Mahasiswa ini dinilai memiliki rasio Cost/Benefit yang paling sesuai dengan bobot kriteria kelayakan dispensasi.
-    </p>
-    <p style="font-size:0.85rem;color:var(--text-muted)">
-      Dihasilkan oleh SPK Dispensasi Mahasiswa — Metode SAW | ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-    </p>`;
+    return `
+      <tr>
+        <td><span class="badge-rank">${item.rank}</span></td>
+        <td><strong>${name}</strong></td>
+        <td>${formatVal(item.score, 4)}</td>
+        <td>${status}</td>
+      </tr>
+    `;
+  }).join('');
 }
