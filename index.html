@@ -3,79 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Cerdas - Dispensasi Mahasiswa (SAW)</title>
+  <title>SPK Dispensasi Mahasiswa — Metode SAW</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  
-  <nav class="floating-nav">
-    <div class="nav-brand">
-      <span class="brand-logo">🎓</span>
-      <div class="brand-title">
-        <strong>Dispensasi Mahasiswa</strong>
-        <span>SPK - Metode SAW</span>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-seal" aria-hidden="true">📋</div>
+      <div class="brand-text">
+        <h1>SPK Dispensasi Mahasiswa</h1>
+        <p>Metode SAW — Simple Additive Weighting</p>
       </div>
     </div>
-    <div class="nav-links" id="mainNav">
-      <button class="nav-item active" data-page="beranda">Ringkasan</button>
-      <button class="nav-item" data-page="input">Data Master</button>
-      <button class="nav-item" data-page="perhitungan">Komputasi SAW</button>
-      <button class="nav-item" data-page="hasil">Rekomendasi</button>
+
+    <nav class="nav" id="mainNav">
+      <button class="nav-btn active" data-page="beranda">Beranda</button>
+      <button class="nav-btn" data-page="input">Input Data</button>
+      <button class="nav-btn" data-page="perhitungan">Perhitungan</button>
+      <button class="nav-btn" data-page="hasil">Hasil</button>
+      <button class="nav-btn" data-page="tentang">Tentang</button>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Buka menu navigasi">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main class="main">
+
+  <section class="page active" id="page-beranda">
+
+    <div class="hero">
+      <div class="hero-left">
+        <div class="hero-kop">
+          <div class="hero-kop-seal">🎓</div>
+          <div class="hero-kop-text">
+            <p>Universitas Jenderal Soedirman</p>
+            <p>Sistem Pendukung Keputusan Akademik</p>
+          </div>
+        </div>
+
+        <span class="method-pill">Metode SAW</span>
+        <p class="hero-tagline">Sistem Rekomendasi<br>Kelayakan Dispensasi Mahasiswa</p>
+        <p class="hero-desc">
+          Sistem ini membantu pengambil keputusan akademik menilai kelayakan pengajuan
+          dispensasi mahasiswa secara objektif berdasarkan 6 kriteria menggunakan
+          metode <strong>Simple Additive Weighting (SAW)</strong>.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-lg" data-goto="input">Mulai Analisis</button>
+          <button class="btn btn-outline" data-goto="tentang">Pelajari SAW</button>
+        </div>
+      </div>
+
+      <div class="summary-panel">
+        <h3>Ringkasan Sistem</h3>
+        <ul class="summary-list">
+          <li><span>Metode SPK</span><strong>SAW</strong></li>
+          <li><span>Jumlah Kriteria</span><strong>6 Kriteria</strong></li>
+          <li><span>Jumlah Mahasiswa</span><strong>5 Alternatif</strong></li>
+          <li><span>Kriteria Benefit</span><strong>4 Kriteria</strong></li>
+          <li><span>Kriteria Cost</span><strong>2 Kriteria</strong></li>
+          <li><span>Rekomendasi #1</span><strong>Athallah</strong></li>
+        </ul>
+      </div>
     </div>
-    <button class="mobile-menu" id="navToggle">☰</button>
-  </nav>
 
-  <main class="app-container">
-    
-    <section class="view-page active" id="page-beranda">
-      <div class="hero-banner">
-        <div class="hero-text">
-          <div class="tagline">Engine: Simple Additive Weighting</div>
-          <h1>Penentuan Prioritas Pengajuan Dispensasi Mahasiswa</h1>
-          <p>Platform analitik berbasis algoritma SAW untuk memproses kelayakan dispensasi berdasarkan 6 kriteria atribut secara transparan dan objektif.</p>
-          <button class="btn btn-primary btn-glow mt-2" data-goto="input">Mulai Proses Evaluasi</button>
-        </div>
-        <div class="hero-visual">
-          <div class="glass-card stat-box">
-            <h2 id="statCriteria">-</h2>
-            <p>Parameter Kriteria</p>
+    <div class="grid-3">
+      <article class="feat-card">
+        <div class="feat-icon">⚖️</div>
+        <h3>Multi-Kriteria</h3>
+        <p>Penilaian berdasarkan 6 aspek: jenis kegiatan, legalitas dokumen, rekam jejak, IPK, durasi absen, dan mata kuliah terdampak.</p>
+      </article>
+      <article class="feat-card">
+        <div class="feat-icon">🔍</div>
+        <h3>Transparan & Terverifikasi</h3>
+        <p>Setiap langkah perhitungan SAW ditampilkan secara lengkap sehingga hasil dapat diaudit dan dipertanggungjawabkan.</p>
+      </article>
+      <article class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Peringkat Kelayakan</h3>
+        <p>Menghasilkan nilai preferensi (Vi) untuk setiap mahasiswa dan mengurutkannya berdasarkan kelayakan tertinggi.</p>
+      </article>
+    </div>
+
+    <div class="criteria-panel">
+      <h3>Kriteria & Bobot Penilaian</h3>
+      <div class="criteria-grid" id="criteriaOverview"></div>
+    </div>
+
+  </section>
+
+  <section class="page" id="page-input">
+    <div class="page-header">
+      <h2>Input Data</h2>
+      <p>Masukkan bobot kriteria dan nilai penilaian setiap mahasiswa pengaju dispensasi.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header-row">
+        <h3>Bobot Kriteria (W)</h3>
+        <span class="weight-total" id="weightTotal">Total Bobot: 1.0000</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="weightTable">
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Nama Kriteria</th>
+              <th>Tipe</th>
+              <th>Bobot</th>
+              <th>Skala & Keterangan</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header-row">
+        <h3>Matriks Keputusan</h3>
+        <button class="btn btn-sm btn-outline" id="btnReset">↺ Reset ke Data Default</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="matrixTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="hint">
+        C1, C2, C3, & C4: Skala 1–5 (Benefit — nilai lebih besar lebih baik) &nbsp;|&nbsp;
+        C5 & C6: Skala 1–5 (Cost — nilai lebih kecil lebih baik)
+      </p>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary btn-lg" id="btnCalculate">⚡ Hitung dengan SAW</button>
+    </div>
+  </section>
+
+  <section class="page" id="page-perhitungan">
+    <div class="page-header">
+      <h2>Perhitungan SAW</h2>
+      <p>Langkah-langkah perhitungan metode Simple Additive Weighting secara lengkap.</p>
+    </div>
+
+    <div id="calcEmpty" class="empty-state">
+      <p>Belum ada perhitungan. Silakan input data dan klik <strong>Hitung dengan SAW</strong>.</p>
+      <button class="btn btn-primary" data-goto="input">← Ke Input Data</button>
+    </div>
+
+    <div id="calcContent" class="hidden">
+      <div class="steps">
+
+        <div class="step-card">
+          <div class="step-num-wrap">
+            <div class="step-num">1</div>
+            <div class="step-line"></div>
           </div>
-          <div class="glass-card stat-box">
-            <h2 id="statAlt">-</h2>
-            <p>Data Mahasiswa</p>
+          <div class="step-body">
+            <h3>Matriks Keputusan (X)</h3>
+            <div class="table-wrap" id="stepMatrix"></div>
           </div>
         </div>
-      </div>
 
-      <div class="content-block">
-        <h3 class="block-title">Konfigurasi Parameter Evaluasi</h3>
-        <div class="parameter-grid" id="criteriaOverview"></div>
-      </div>
-    </section>
-
-    <section class="view-page" id="page-input">
-      <div class="page-header">
-        <h2>Manajemen Data Master</h2>
-        <p>Sesuaikan konfigurasi bobot kriteria dan matriks nilai riwayat alternatif.</p>
-      </div>
-
-      <div class="content-block">
-        <div class="block-head">
-          <h3>Vektor Bobot Kriteria (W)</h3>
-          <div class="weight-indicator" id="weightTotal">Akumulasi: 1.00</div>
+        <div class="step-card">
+          <div class="step-num-wrap">
+            <div class="step-num">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Nilai Maksimum & Minimum Tiap Kriteria</h3>
+            <span class="formula">Benefit: max(X<sub>j</sub>) &nbsp;|&nbsp; Cost: min(X<sub>j</sub>)</span>
+            <div class="table-wrap" id="stepMaxMin"></div>
+          </div>
         </div>
-        <div class="table-wrapper">
-          <table class="styled-table" id="weightTable">
+
+        <div class="step-card">
+          <div class="step-num-wrap">
+            <div class="step-num">3</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Normalisasi Matriks (r<sub>ij</sub>)</h3>
+            <span class="formula">Benefit: r<sub>ij</sub> = X<sub>ij</sub> / max(X<sub>j</sub>) &nbsp;|&nbsp; Cost: r<sub>ij</sub> = min(X<sub>j</sub>) / X<sub>ij</sub></span>
+            <div class="table-wrap" id="stepNormalized"></div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num-wrap">
+            <div class="step-num">4</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3>Matriks Normalisasi Terbobot (W<sub>j</sub> × r<sub>ij</sub>)</h3>
+            <span class="formula">V<sub>i</sub> contribution per kriteria = W<sub>j</sub> × r<sub>ij</sub></span>
+            <div class="table-wrap" id="stepWeighted"></div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num-wrap">
+            <div class="step-num">5</div>
+          </div>
+          <div class="step-body">
+            <h3>Nilai Preferensi & Ranking (V<sub>i</sub>)</h3>
+            <span class="formula">V<sub>i</sub> = Σ (W<sub>j</sub> × r<sub>ij</sub>)</span>
+            <div class="table-wrap" id="stepPreference"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-hasil">
+    <div class="page-header">
+      <h2>Hasil & Rekomendasi</h2>
+      <p>Peringkat kelayakan dispensasi mahasiswa berdasarkan nilai preferensi SAW.</p>
+    </div>
+
+    <div id="resultEmpty" class="empty-state">
+      <p>Belum ada hasil. Lakukan perhitungan terlebih dahulu.</p>
+      <button class="btn btn-primary" data-goto="input">← Ke Input Data</button>
+    </div>
+
+    <div id="resultContent" class="hidden">
+      <div class="result-hero-card" id="resultHero"></div>
+
+      <div class="card">
+        <div class="card-header-row">
+          <h3>Peringkat Kelayakan Dispensasi</h3>
+          <button class="btn btn-sm btn-outline" id="btnPrint">🖨️ Cetak Laporan</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="resultTable">
             <thead>
               <tr>
-                <th>Kode</th>
-                <th>Nama Kriteria</th>
-                <th>Sifat Atribut</th>
-                <th>Nilai Bobot</th>
-                <th>Spesifikasi</th>
+                <th>Ranking</th>
+                <th>Nama Mahasiswa</th>
+                <th>Kegiatan</th>
+                <th>Nilai Preferensi (V<sub>i</sub>)</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -83,98 +260,76 @@
         </div>
       </div>
 
-      <div class="content-block">
-        <div class="block-head">
-          <h3>Matriks Evaluasi Mahasiswa (X)</h3>
-          <button class="btn btn-outline" id="btnReset">⟲ Muat Ulang Default</button>
-        </div>
-        <div class="table-wrapper">
-          <table class="styled-table" id="matrixTable">
-            <thead></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-primary btn-large btn-glow" id="btnCalculate">Jalankan Engine SAW 🚀</button>
-        </div>
+      <div class="card">
+        <h3>Laporan Analisis Keputusan</h3>
+        <div id="reportText" class="report-text"></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="view-page" id="page-perhitungan">
-      <div class="page-header">
-        <h2>Logika Komputasi SAW</h2>
-        <p>Jejak transparansi perhitungan dari tahap normalisasi matriks hingga preferensi akhir.</p>
-      </div>
+  <section class="page" id="page-tentang">
+    <div class="page-header">
+      <h2>Tentang Sistem</h2>
+      <p>Informasi latar belakang penelitian, metode, dan tim pengembang.</p>
+    </div>
 
-      <div id="calcEmpty" class="blank-state">
-        <div class="blank-icon">🧮</div>
-        <h3>Belum Ada Komputasi</h3>
-        <p>Sistem menunggu instruksi eksekusi dari data master.</p>
-        <button class="btn btn-primary" data-goto="input">Kembali ke Data Master</button>
-      </div>
-
-      <div id="calcContent" class="hidden">
-        <div class="content-block step-block">
-          <h3><span class="step-num">1</span> Matriks Normalisasi (R)</h3>
-          <p class="formula-text">Benefit: X / Max(X) | Cost: Min(X) / X</p>
-          <div class="table-wrapper" id="stepNormalized"></div>
-        </div>
-
-        <div class="content-block step-block">
-          <h3><span class="step-num">2</span> Nilai Preferensi Akhir (V)</h3>
-          <p class="formula-text">V = Σ (R × W)</p>
-          <div class="table-wrapper" id="stepPreference"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="view-page" id="page-hasil">
-      <div class="page-header">
-        <h2>Rekomendasi Kelayakan</h2>
-        <p>Hasil akhir pengurutan prioritas penerima dispensasi.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Latar Belakang</h3>
+        <p style="color:var(--muted);font-size:0.92rem;line-height:1.75">
+          Dispensasi akademik adalah izin resmi yang diberikan kepada mahasiswa untuk tidak mengikuti
+          perkuliahan karena mengikuti kegiatan tertentu yang diakui kampus. Banyaknya pengajuan
+          dispensasi setiap semester menjadi tantangan bagi akademisi untuk menilainya secara konsisten
+          dan objektif.
+        </p>
+        <p style="color:var(--muted);font-size:0.92rem;line-height:1.75;margin-top:0.75rem">
+          Sistem ini menggunakan metode SAW (Simple Additive Weighting) untuk memberikan rekomendasi
+          berbasis data dari 6 kriteria yang telah disepakati, sehingga proses penilaian menjadi lebih
+          terstruktur, transparan, dan dapat dipertanggungjawabkan.
+        </p>
       </div>
 
-      <div id="resultEmpty" class="blank-state">
-        <div class="blank-icon">📊</div>
-        <h3>Laporan Tidak Tersedia</h3>
-        <p>Harap jalankan engine algoritma SAW terlebih dahulu.</p>
+      <div class="card">
+        <h3>Metode SAW</h3>
+        <p style="color:var(--muted);font-size:0.92rem;line-height:1.75">
+          <strong>Simple Additive Weighting (SAW)</strong> adalah metode pengambilan keputusan
+          multikriteria yang menghitung nilai preferensi setiap alternatif sebagai jumlah tertimbang
+          dari nilai normalisasinya pada setiap kriteria.
+        </p>
+        <ol class="method-ol">
+          <li>Menyusun matriks keputusan</li>
+          <li>Menentukan nilai max/min tiap kriteria</li>
+          <li>Normalisasi matriks (Benefit: x/max | Cost: min/x)</li>
+          <li>Perkalian bobot dengan nilai normalisasi</li>
+          <li>Penjumlahan nilai terbobot → nilai preferensi (Vi)</li>
+          <li>Ranking berdasarkan Vi tertinggi</li>
+        </ol>
       </div>
+    </div>
 
-      <div id="resultContent" class="hidden">
-        
-        <div class="podium-container" id="podiumArea">
-          </div>
+    <div class="card">
+      <h3>Data Alternatif Mahasiswa</h3>
+      <div id="altList"></div>
+    </div>
 
-        <div class="content-block">
-          <div class="block-head">
-            <h3>Daftar Lengkap Peringkat (Ranking)</h3>
-            <button class="btn btn-primary" id="btnPrint">🖨️ Cetak PDF</button>
-          </div>
-          <div class="table-wrapper">
-            <table class="styled-table rank-table" id="resultTable">
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Identitas Mahasiswa</th>
-                  <th>Skor Preferensi (V)</th>
-                  <th>Status Dispensasi</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
+    <div class="card">
+      <h3>Tim Pengembang</h3>
+      <ul class="authors-list" id="authorsList"></ul>
+      <p class="team-label">Proyek Sistem Pendukung Keputusan — Informatika</p>
+    </div>
+  </section>
 
-      </div>
-    </section>
-  </main>
+</main>
 
-  <footer class="app-footer">
-    <p>SPK Pengajuan Dispensasi Mahasiswa — Algoritma Simple Additive Weighting (SAW)</p>
-  </footer>
+<footer class="footer">
+  <p>
+    <strong>SPK Dispensasi Mahasiswa</strong> — Metode SAW &nbsp;|&nbsp;
+    &copy; 2026 Universitas Jenderal Soedirman
+  </p>
+</footer>
 
-  <script src="js/data.js"></script>
-  <script src="js/saw.js"></script>
-  <script src="js/app.js"></script>
+<script src="js/data.js"></script>
+<script src="js/saw.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
